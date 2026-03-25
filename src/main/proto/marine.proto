@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "distsys.smartmarine";
+option java_outer_classname = "MarineProto";
+
+package smartmarine;
+
+message Empty {}
+
+message LocationRequest {
+  int32 locationId = 1;
+}
+
+message Temperature {
+  double value = 1;
+}
+
+message PHReading {
+  double value = 1;
+}
+
+message PollutionReading {
+  int32 locationId = 1;
+  double microplasticIndex = 2;
+  double chemicalLevel = 3;
+}
+
+message PollutionSummary {
+  int32 totalReadings = 1;
+  double averageMicroplasticIndex = 2;
+  double averageChemicalLevel = 3;
+  string level = 4;
+}
+
+message PollutionStatus {
+  string level = 1;
+  double microplasticIndex = 2;
+}
+
+message Species {
+  string name = 1;
+  string category = 2;
+  string riskStatus = 3;
+}
+
+message SpeciesRequest {
+  string name = 1;
+}
+
+message SpeciesStatus {
+  string name = 1;
+  string populationTrend = 2;
+  int32 lastSeenDaysAgo = 3;
+}
+
+message AlertRequest {
+  string sourceService = 1;
+  string alertType = 2;
+  string message = 3;
+  int32 severity = 4;
+}
+
+message AlertResponse {
+  string alertId = 1;
+  bool created = 2;
+}
+
+message Alert {
+  string alertId = 1;
+  string alertType = 2;
+  string message = 3;
+  int32 severity = 4;
+}
+
+message AlertSubscription {
+  string clientName = 1;
+}
+
+message AlertMessage {
+  string text = 1;
+  string source = 2;
+}
+
+service WaterQualityService {
+  rpc getWaterTemperature (Empty) returns (Temperature);
+  rpc getWaterPH (Empty) returns (PHReading);
+  rpc sendPollutionReadings (stream PollutionReading) returns (PollutionSummary);
+}
+
+service MarineLifeService {
+  rpc listObservedSpecies (LocationRequest) returns (stream Species);
+  rpc getSpeciesStatus (SpeciesRequest) returns (SpeciesStatus);
+}
+
+service AlertService {
+  rpc createAlert (AlertRequest) returns (AlertResponse);
+  rpc getActiveAlerts (Empty) returns (stream Alert);
+  rpc liveAlertChannel (stream AlertSubscription) returns (stream AlertMessage);
+}
