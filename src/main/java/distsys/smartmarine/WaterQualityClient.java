@@ -26,10 +26,17 @@ public class WaterQualityClient {
         //Create request
         Empty request = Empty.newBuilder().build();
         
-        //Method
-        Temperature response = stub.getWaterTemperature(request);
+        //Method Temperature
+        // Temperature response = stub.getWaterTemperature(request);
+        
+        //Method water PH
+        PHReading response = stub.getWaterPH(request);
 
-        System.out.println("Water Temperature: " + response.getValue() + " °C");
+        //Print Temperature
+        //System.out.println("Water Temperature: " + response.getValue() + " C");
+        
+        //Print water PH
+        System.out.println("Water pH: " + response.getValue());
 
         //Close channel
         channel.shutdown();
